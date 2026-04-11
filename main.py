@@ -1,7 +1,33 @@
 # IT Dashboard COP1034C - Week 1 starter script
 
+from datetime import datetime
+
+
 APPNAME = "IT Dashboard"
 VERSION = "0.1.0"
+AUTHOR = "Brandon Lee"
+COPYRIGHT = "Copyright (c) 2024 Brandon Lee. All rights reserved."
+COURSE_NAME = "Programming for Technology Professionals - KU_JAX_COP1034CD4-104062026"
+INSTRUCTORS_NAME = "Proffessor Mora"
+ASSIGNMENT_NAME = "Week 1 - IT Dashboard Starter Script"
+# Get the current local date and time
+currenttime = datetime.now()
+
+# Print the header information
+print("-------------------------------- ")
+print(f"Author: {AUTHOR}")
+print(f"{COPYRIGHT}")
+print("-------------------------------- ")
+print(f"Course: {COURSE_NAME}")
+print(f"Instructor: {INSTRUCTORS_NAME}")
+print(f"Assignment: {ASSIGNMENT_NAME}")
+print("-------------------------------- ")
+
+
+# Format as YYYY-MM-DD HH:MM:SS
+formattedtime = currenttime.strftime("%Y-%m-%d %H:%M:%S")
+
+print(f"Report generated on: {formattedtime}")
 
 # --- Variable Declarations ---
 # String variables for server identity
@@ -52,7 +78,8 @@ def main():
     global report_ready, disk_status
 
     print(f"{APPNAME} v{VERSION}")
-    print("Be careful spongebob. BE CAREFUL SPONGEBOB!")
+    print("================================")
+    print("Careful spongebob. CAREFUL SPONGEBOB!")
 
     # --- Main Menu Loop ---
     # Keeps the program running until the user chooses to exit
