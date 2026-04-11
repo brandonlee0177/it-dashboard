@@ -3,87 +3,131 @@
 APPNAME = "IT Dashboard"
 VERSION = "0.1.0"
 
-# Global state (initial defaults)
-servername = "Layla"
-ipaddress = "10.0.0.1"
+# --- Variable Declarations ---
+# String variables for server identity
+server_name = "Layla"
+ip_address = "10.0.0.1"
 department = "New to IT"
 
-totaldiskgb = 70
-useddiskgb = 30
+# Numeric variables for disk metrics (integers in GB)
+total_disk_gb = 70
+used_disk_gb = 30
 
-usagepct = 0.0
-reportready = False
-diskstatus = "OK - Disk usage is normal"
+# Float and Boolean for calculations and program state
+usage_pct = 0.0
+report_ready = True
+disk_status = "OK - Disk usage is normal"
 
 def run_system_checks():
-    checks = ["Ping response", "DNS resolution", "Firewall rule active"]
+    # Iterating through a list of checks using a for loop
+    checks = ["CPU Usage", "Memory Usage", "Disk Space", "Network Connectivity"]
     print("System Checks:")
     for check in checks:
         print(f"  - {check}: PASS")  # simulated result
 
-def printreport():
-    print(f"Server: {servername} ({ipaddress}) - Dept: {department}")
-    print(f"Disk Usage: {useddiskgb}/{totaldiskgb} GB ({usagepct:.2f}%) - {diskstatus}")
+def print_report():
+    # --- Report Generation ---
+    # Calculate free disk space
+    free_disk_gb = total_disk_gb - used_disk_gb
+    
+    # Using f-string alignment (:<12) to create a clean, table-like layout
+    print("====================================")
+    print("        IT SYSTEM STATUS REPORT     ")
+    print("====================================")
+    print(f"{'Server Name':<12}: {server_name}")
+    print(f"{'IP Address':<12}: {ip_address}")
+    print(f"{'Department':<12}: {department}")
+    print("------------------------------------")
+    print(f"{'Total Disk':<12}: {total_disk_gb} GB")
+    print(f"{'Used Disk':<12}: {used_disk_gb} GB")
+    print(f"{'Free Disk':<12}: {free_disk_gb} GB")
+    print(f"{'Usage':<12}: {usage_pct:.2f}%")
+    print(f"{'Status':<12}: {disk_status}")
+    print("====================================")
 
 def main():
-    global servername, ipaddress, department
-    global totaldiskgb, useddiskgb, usagepct
-    global reportready, diskstatus
+    # Pulling in the global variables so the menu can update them
+    global server_name, ip_address, department
+    global total_disk_gb, used_disk_gb, usage_pct
+    global report_ready, disk_status
 
     print(f"{APPNAME} v{VERSION}")
-    print("Ready to build something great.")
+    print("Be careful spongebob. BE CAREFUL SPONGEBOB!")
 
+    # --- Main Menu Loop ---
+    # Keeps the program running until the user chooses to exit
     while True:
+        print("================================")
         print("\n--- IT Report Generator ---")
         print("1) Set Server Info")
         print("2) View Report")
         print("3) Run System Checks")
         print("4) Exit")
+        print("================================")
 
-        choice=input("Select an option:[1-4] ").strip()
+        choice = input("Select an option: ").strip()
 
         if choice == "1":
-            servername = input(f"Server Name [{servername}]: ").strip() or servername
-            ipaddress = input(f"IP Address [{ipaddress}]: ").strip() or ipaddress
-            department = input(f"Department [{department}]: ").strip() or department
+            # --- User Input Block ---
+            # Ensure defaults exist in the outer scope: server_name, ip_address, department,
+            # total_disk_gb, used_disk_gb should be initialized beforehand.
+            server_name = input(f"Server Name: ").strip() or server_name
+            ip_address = input(f"IP Address: ").strip() or ip_address
+            department = input(f"Department: ").strip() or department
 
+            # Disk metrics
             try:
-                totaldiskgb = int(input(f"Total Disk (GB) [{totaldiskgb}]: ").strip() or totaldiskgb)
-                useddiskgb = int(input(f"Used Disk (GB) [{useddiskgb}]: ").strip() or useddiskgb)
+                total_disk_gb = int(input(f"Total Disk (GB): ").strip() or str(total_disk_gb))
+                used_disk_gb  = int(input(f"Used Disk (GB): ").strip() or str(used_disk_gb))
             except ValueError:
                 print("Invalid input for disk space. Please enter numeric values.")
                 continue
 
-            if totaldiskgb < 0 or useddiskgb < 0 or useddiskgb > totaldiskgb:
+            # Edge case handling
+            if total_disk_gb < 0 or used_disk_gb < 0 or used_disk_gb > total_disk_gb:
                 print("Invalid disk values. Ensure non-negative and used <= total.")
                 continue
 
-            if totaldiskgb > 0:
-                usagepct=(useddiskgb / totaldiskgb) * 100
+            # Calculations
+            if total_disk_gb > 0:
+                usage_pct = (used_disk_gb / total_disk_gb) * 100
             else:
-                usagepct = 0.0
+                usage_pct = 0.0
 
-            if usagepct > 90:
-                diskstatus = "CRITICAL - Immediate action required"
-            elif usagepct > 75:
-                diskstatus = "WARNING - Disk usage is elevated"
+            # Classification
+            if usage_pct > 90:
+                disk_status = "CRITICAL - Immediate action required"
+            elif usage_pct > 75:
+                disk_status = "WARNING - Disk usage is elevated"
             else:
-                diskstatus = "OK - Disk usage is normal"
+                disk_status = "OK - Disk usage is normal"
 
-            reportready = True
-            print("Data entered. You can view the report.")
+            # mark that a report can be shown
+            report_ready = True
+
+            # Show the report
+            print("Data entered. Here is the report:")
+            print("================================")
+            print(f"Server Name: {server_name}")
+            print(f"IP Address: {ip_address}")
+            print(f"Department: {department}")
+            print(f"Total Disk (GB): {total_disk_gb}")
+            print(f"Used Disk (GB): {used_disk_gb}")
+            print(f"Usage: {usage_pct:.2f}%")
+            print(f"Disk Status: {disk_status}")
+            print("================================")
 
         elif choice == "2":
-            if not reportready:
+            if not report_ready:
                 print("No data entered yet. Choose option 1 first.")
             else:
-                printreport()
+                print_report()
 
         elif choice == "3":
             run_system_checks()
 
         elif choice == "4":
-            print("Goodbye.")
+            print("Smell ya later stinky.")
             break
 
         else:
