@@ -8,7 +8,7 @@ VERSION = "0.1.0"
 AUTHOR = "Brandon Lee"
 COPYRIGHT = "Copyright (c) 2024 Brandon Lee. All rights reserved."
 COURSE_NAME = "Programming for Technology Professionals - KU_JAX_COP1034CD4-104062026"
-INSTRUCTORS_NAME = "Proffessor Mora"
+INSTRUCTORS_NAME = "Professor Mora"
 ASSIGNMENT_NAME = "Week 1 - IT Dashboard Starter Script"
 # Get the current local date and time
 currenttime = datetime.now()
