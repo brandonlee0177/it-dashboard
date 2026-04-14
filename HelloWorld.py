@@ -1,3 +1,6 @@
+from ntpath import join
+
+
 print("Hello World!")
 age=25
 items=4
@@ -31,3 +34,43 @@ print(user["name"],user["age"],user["email"],user["roles"])
 constant=frozenset([3.14,2.718])
 data=bytes([5])
 print(data)
+
+msg = "Hello, World! The sky is blue asf."
+print(len(msg))
+print(msg[2:6]) #'H'
+
+name = "ALICE"
+
+print(name.lower()) 
+pass
+
+print(r"C:\Users\jupit\Desktop\it-dashboard\requirements.txt".lower())
+pass
+line = "apples,bananas,cherrys"
+print(line.split("a"))
+print(line)
+pass
+word = ["Hello", "there"]
+print(" ".join(word))
+
+pass
+name = "Brandon"
+print(f"Hello, {name}!")
+
+name = "Carl"
+print("Hello, {name}!")
+pass 
+
+a = 5000
+b = 10000
+c = 39274739
+print(f"sum is {a+b+c:,}")
+pass
+
+msg2 = '''This is a multi-line comment 
+this is more line
+more line
+more line
+stop here'''
+print(msg2)
+
