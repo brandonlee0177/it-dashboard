@@ -44,8 +44,8 @@ print()
 import random
 
 while True:
-    secret = random.randint(1, 3)
-    triesleft = 10
+    secret = random.randint(1, 177)
+    triesleft = 9
     attempts = 0
     exitgame = False
 
