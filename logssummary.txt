@@ -1,0 +1,20 @@
+==================================
+     SERVER LOG ANALYSIS REPORT     
+==================================
+Log File : server.log
+linesread : 11
+----------------------------------
+Severity Counts:
+  INFO    :  4
+  WARNING :  3
+  ERROR   :  3
+  CRITICAL:  1
+----------------------------------
+ERRORRATE : 27.27%
+----------------------------------
+UNIQUEERRORS (2 total)
+  - Connection refused to database
+  - NIC timeout on eth0
+CRITICALEVENTS (1 total)
+  - Primary database unreachable
+================================

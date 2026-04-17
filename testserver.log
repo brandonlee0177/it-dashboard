@@ -1,0 +1,4 @@
+ - 2026-04-01 12:00:01 [INFO] Server started
+  - 2026-04-01 12:01:02 [WARNING] Latency detected
+  - 2026-04-01 12:02:03 [ERROR] Connection refused to database
+  - 2026-04-01 12:03:04 [CRITICAL] Primary database unreachable

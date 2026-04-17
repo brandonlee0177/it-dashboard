@@ -54,6 +54,7 @@ def main():
             choice = input("Enter your choice (1-5): ")
             if choice == '1':
                 radius = float(input("Enter the radius of the circle: "))
+                t.clear
                 draw_circle(radius)
                 print()
                 print("--------------------------------")
@@ -61,6 +62,7 @@ def main():
                 print("--------------------------------")
             elif choice == '2':
                 side_length = float(input("Enter the side length of the square: "))
+                t.clear
                 draw_square(side_length)
                 print()
                 print("--------------------------------")
@@ -68,6 +70,7 @@ def main():
                 print("--------------------------------")
             elif choice == '3':
                 side_length = float(input("Enter the side length of the triangle: "))
+                t.clear
                 draw_triangle(side_length)
                 print()
                 print("------------------------------------------")
@@ -75,6 +78,7 @@ def main():
                 print("------------------------------------------")
             elif choice == '4':
                 length = int(input("Enter the length of the squiggly line: "))
+                t.clear
                 draw_squiggly_line(length)
                 print()
                 print("------------------------------------------")

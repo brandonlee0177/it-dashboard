@@ -1,7 +1,10 @@
 # IT Dashboard COP1034C - Week 1 starter script
 
 from datetime import datetime
-
+import logging
+debug = True
+logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
+logging.debug(f"DEBUG: debug={debug}")
 
 APPNAME = "IT Dashboard"
 VERSION = "0.1.0"
@@ -71,6 +74,91 @@ def print_report():
     print(f"{'Status':<12}: {disk_status}")
     print("====================================")
 
+def analyzeserverlogs():
+    """Week 2 Parses server.log and generates logssummary.txt"""
+    print("\n--- Running Log Analysis ---")
+    # Initialize data structures for log tracking
+    severitycounts = {"INFO": 0, "WARNING": 0, "ERROR": 0, "CRITICAL": 0}
+    uniqueerrors = set()
+    criticalevents = set()
+    logentries = []
+    linesread = 0
+
+    import os
+    LOGPATH = "server.log"
+    LOGPATH = os.environ.get("LOGFILE", LOGPATH)
+
+    try:
+        with open(LOGPATH, "r") as f:
+            for line in f:
+                linesread += 1
+                raw = line.rstrip("\n")
+                parts = line.strip().split(maxsplit=3)
+                if 'debug' in globals() and debug:
+                    print(f"DEBUGLINE raw={raw!r} | parts={parts!r} | len(parts)={len(parts)}")
+                if len(parts) < 3:
+                    continue
+
+                datefield = f"{parts[0]} {parts[1]}"
+
+                severity = None
+                message = None
+
+                # Case A: line like "YYYY-MM-DD HH:MM:SS [INFO] Message"
+                if len(parts) >= 3 and parts[2].startswith("[") and "]" in parts[2]:
+                    end = parts[2].find("]")
+                    severity = parts[2][1:end].upper()
+                    message = parts[3] if len(parts) > 3 else ""
+                # Case B: line where the severity is in parts[3], e.g. "... [INFO] Message"
+                elif len(parts) >= 4 and parts[3].startswith("[") and "]" in parts[3]:
+                    end = parts[3].find("]")
+                    severity = parts[3][1:end].upper()
+                    message = parts[3][end+2:]
+                else:
+                    # Unknown format; skip this line
+                    continue
+
+                if severity is None or message is None:
+                    continue
+
+                severitycounts[severity] = severitycounts.get(severity, 0) + 1
+                if severity == "ERROR":
+                    uniqueerrors.add(message)
+                if severity == "CRITICAL":
+                    criticalevents.add(message)
+
+                logentries.append({ "date": datefield, "severity": severity, "message": message })
+    except FileNotFoundError:
+        print("Error: server.log not found. Place the log file in the working directory.")
+        return
+
+    totallines = linesread
+    totalseen = sum(severitycounts.get(s, 0) for s in ["INFO","WARNING","ERROR","CRITICAL"])
+    errorrate = (severitycounts.get("ERROR", 0) / totalseen * 100) if totalseen > 0 else 0.0
+
+    with open("logssummary.txt", "w") as out:
+        out.write("==================================\n")
+        out.write("     SERVER LOG ANALYSIS REPORT     \n")
+        out.write("==================================\n")
+        out.write(f"Log File : {LOGPATH}\n")
+        out.write(f"linesread : {totallines}\n")
+        out.write("----------------------------------\n")
+        out.write("Severity Counts:\n")
+        for level in ["INFO", "WARNING", "ERROR", "CRITICAL"]:
+            out.write(f"  {level:<8}: {severitycounts.get(level, 0):>2}\n")
+        out.write("----------------------------------\n")
+        out.write(f"ERRORRATE : {errorrate:.2f}%\n")
+        out.write("----------------------------------\n")
+        out.write(f"UNIQUEERRORS ({len(uniqueerrors)} total)\n")
+        for err in sorted(uniqueerrors):
+            out.write(f"  - {err}\n")
+        out.write(f"CRITICALEVENTS ({len(criticalevents)} total)\n")
+        for crit in sorted(criticalevents):
+            out.write(f"  - {crit}\n")
+        out.write("================================\n")
+    print("SUCCESS: Analysis complete. Results written to logssummary.txt")
+
+
 def main():
     # Pulling in the global variables so the menu can update them
     global server_name, ip_address, department
@@ -89,7 +177,8 @@ def main():
         print("1) Set Server Info")
         print("2) View Report")
         print("3) Run System Checks")
-        print("4) Exit")
+        print("4) Analyze Server Logs")
+        print("5) Exit")
         print("================================")
 
         choice = input("Select an option: ").strip()
@@ -154,6 +243,9 @@ def main():
             run_system_checks()
 
         elif choice == "4":
+            analyzeserverlogs()
+
+        elif choice == "5":
             print("Smell ya later stinky.")
             break
 
