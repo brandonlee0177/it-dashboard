@@ -2,7 +2,7 @@
 
 from datetime import datetime
 import logging
-debug = True
+debug = False
 logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
 logging.debug(f"DEBUG: debug={debug}")
 
@@ -187,14 +187,14 @@ def main():
             # --- User Input Block ---
             # Ensure defaults exist in the outer scope: server_name, ip_address, department,
             # total_disk_gb, used_disk_gb should be initialized beforehand.
-            server_name = input(f"Server Name: ").strip() or server_name
-            ip_address = input(f"IP Address: ").strip() or ip_address
-            department = input(f"Department: ").strip() or department
+            server_name = input("Server Name: ").strip() or server_name
+            ip_address = input("IP Address: ").strip() or ip_address
+            department = input("Department: ").strip() or department
 
             # Disk metrics
             try:
-                total_disk_gb = int(input(f"Total Disk (GB): ").strip() or str(total_disk_gb))
-                used_disk_gb  = int(input(f"Used Disk (GB): ").strip() or str(used_disk_gb))
+                total_disk_gb = int(input("Total Disk (GB): ").strip() or str(total_disk_gb))
+                used_disk_gb  = int(input("Used Disk (GB): ").strip() or str(used_disk_gb))
             except ValueError:
                 print("Invalid input for disk space. Please enter numeric values.")
                 continue

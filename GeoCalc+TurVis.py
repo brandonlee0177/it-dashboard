@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import turtle
 
 APPNAME = "IT Dashboard"
 VERSION = "0.1.0"
@@ -11,9 +11,6 @@ ASSIGNMENT_NAME = "Week 2 - Geometry calculator + Turtle Visualization"
 # Get the current local date and time
 currenttime = datetime.now()
 
-import math
-import turtle
-
 t = turtle.Turtle()
 t.speed(5)  # Set turtle speed to fast
 
@@ -22,14 +19,18 @@ def draw_circle(radius):
     t.color(color)
     t.circle(radius)
 def draw_square(side_length):
+    width = 5
     color = "red"
     t.color(color)
+    t.width(width)
     for _ in range(4):
         t.forward(side_length)
         t.left(90)  
 def draw_triangle(side_length):
+    width = 10
     color = "green"
     t.color(color)
+    t.width(width)
     for _ in range(3):
         t.forward(side_length)
         t.left(120) 
@@ -54,7 +55,7 @@ def main():
             choice = input("Enter your choice (1-5): ")
             if choice == '1':
                 radius = float(input("Enter the radius of the circle: "))
-                t.clear
+                t.clear()
                 draw_circle(radius)
                 print()
                 print("--------------------------------")
@@ -62,7 +63,8 @@ def main():
                 print("--------------------------------")
             elif choice == '2':
                 side_length = float(input("Enter the side length of the square: "))
-                t.clear
+                length = int(side_length)
+                t.clear()
                 draw_square(side_length)
                 print()
                 print("--------------------------------")
@@ -70,6 +72,7 @@ def main():
                 print("--------------------------------")
             elif choice == '3':
                 side_length = float(input("Enter the side length of the triangle: "))
+                length = int(side_length)
                 t.clear
                 draw_triangle(side_length)
                 print()
@@ -78,7 +81,8 @@ def main():
                 print("------------------------------------------")
             elif choice == '4':
                 length = int(input("Enter the length of the squiggly line: "))
-                t.clear
+                length = int(length)
+                t.clear()
                 draw_squiggly_line(length)
                 print()
                 print("------------------------------------------")

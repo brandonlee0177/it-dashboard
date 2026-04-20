@@ -1,0 +1,9 @@
+Report generated on: 2026-04-20 12:26:32
+_____________________________________________________________
+Employee Name | ID Number | Department    | Position
+=============================================================
+Susan Meyers  | 47899     | Accounting    | Vice President
+Mark Jones    | 39119     | IT            | Programmer    
+Joy Rogers    | 81774     | Manufacturing | Engineer      
+=============================================================
+End of employee report.
