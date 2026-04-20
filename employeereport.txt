@@ -1,9 +1,45 @@
-Report generated on: 2026-04-20 12:26:32
-_____________________________________________________________
-Employee Name | ID Number | Department    | Position
-=============================================================
-Susan Meyers  | 47899     | Accounting    | Vice President
-Mark Jones    | 39119     | IT            | Programmer    
-Joy Rogers    | 81774     | Manufacturing | Engineer      
-=============================================================
+IT Dashboard Report generated on: 2026-04-20 15:38:38
+
+-------------------------------- 
+App Name: IT Dashboard
+Version: 0.1.0
+Author: Brandon Lee
+Copyright (c) 2026 Brandon Lee. All rights reserved.
+-------------------------------- 
+Course: Programming for Technology Professionals - KUJAXCOP1034CD4-104062026
+Instructor: Professor Mora
+Assignment: Week 3 - Separated Employee Tables
+-------------------------------- 
+
+=========================================================================
+ GENERAL EMPLOYEE ROSTER
+=========================================================================
+ID Number    | Employee Name      | Department      | Job Title
+-------------------------------------------------------------------------
+47899        | Susan Meyers       | Accounting      | Vice President
+39119        | Mark Jones         | IT              | Programmer
+81774        | Joy Rogers         | Manufacturing   | Engineer
+
+
+
+==================================================
+ PRODUCTION WORKER SCHEDULE
+==================================================
+Employee Name      | Shift      | Hourly Rate
+--------------------------------------------------
+Susan Meyers       | 1          | $25.50
+Mark Jones         | 2          | $25.50
+Joy Rogers         | 3          | On Salary
+
+
+
+===============================================================
+ SHIFT SUPERVISOR COMPENSATION
+===============================================================
+Employee Name      | Annual Salary   | Yearly Bonus
+---------------------------------------------------------------
+Joy Rogers         | $75,000.00      | $5,000.00
+
+
+
 End of employee report.
