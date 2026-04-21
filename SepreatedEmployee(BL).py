@@ -1,5 +1,7 @@
 from datetime import datetime
 import logging
+import os
+import subprocess  # <-- Added this to open Notepad
 
 # ==========================================
 # --- Class Definitions (Based on UML) ---
@@ -112,9 +114,14 @@ def main():
 
     # Output to terminal
     print("\nGenerating report...")
+
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     
-    # Writing separated tables to the report file
-    with open("employeereport.txt", "w") as f:
+    # --- Create an absolute path for the text file ---
+    REPORT_PATH = os.path.join(SCRIPT_DIR, "employeereport.txt")
+    
+    # Writing separated tables to the absolute path
+    with open(REPORT_PATH, "w") as f:
         print(f"IT Dashboard Report generated on: {formattedtime}\n", file=f)
         
         # Added file=f to all these so they print inside the text document
@@ -168,7 +175,17 @@ def main():
         
         print("End of employee report.", file=f)
         
-    print("File 'employeereport.txt' has been generated successfully. Check the file for the separated tables.")
+    print(f"SUCCESS: Report generated at {REPORT_PATH}")
+
+    # --- Pop Open Notepad ---
+    try:
+        subprocess.Popen(['notepad.exe', REPORT_PATH])
+    except Exception as e:
+        print(f"Could not automatically open Notepad: {e}")
+
+    # --- Pause Screen ---
+    # This stops the terminal from instantly vanishing when launched via File Explorer
+    input("\nPress Enter to close this window...")
 
 if __name__ == "__main__":
     main()
