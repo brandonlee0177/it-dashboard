@@ -1,243 +1,419 @@
-# IT Dashboard COP1034C - Week 1/2 Script
+"""
+IT Dashboard - Network & System Management Tool
+Course: KU_JAX_COP1034CD4-104062026
+Assignment: Week 3 - OOP & Network Topology
+"""
 
 from datetime import datetime
 import logging
 import os
 import subprocess
+import turtle
+import random
 
+# --- 1. BOILERPLATE & CONSTANTS ---
 debug = False
 logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
-logging.debug(f"DEBUG: debug={debug}")
 
 APPNAME = "IT Dashboard"
-VERSION = "0.1.0"
+VERSION = "0.4.0"
 AUTHOR = "Brandon Lee"
 COPYRIGHT = "Copyright (c) 2026 Brandon Lee. All rights reserved."
 COURSE_NAME = "Programming for Technology Professionals - KU_JAX_COP1034CD4-104062026"
 INSTRUCTORS_NAME = "Professor Mora"
-ASSIGNMENT_NAME = "Week 1 & 2 - IT Dashboard Script"
+ASSIGNMENT_NAME = "Week 3 - OOP Network Management"
 
-# Get the current local date and time
-currenttime = datetime.now()
+# --- 2. CLASS DEFINITIONS (OOP CORE) ---
 
-# Print the header information
-print("-------------------------------- ")
-print(f"Author: {AUTHOR}")
-print(f"{COPYRIGHT}")
-print("-------------------------------- ")
-print(f"Course: {COURSE_NAME}")
-print(f"Instructor: {INSTRUCTORS_NAME}")
-print(f"Assignment: {ASSIGNMENT_NAME}")
-print("-------------------------------- ")
+class NetworkDevice:
+    """Base class representing a generic network device."""
+    
+    def __init__(self, hostname, ip_address, device_type, status="online"):
+        """
+        Initialize a NetworkDevice with identity and status fields.
+        
+        Args:
+            hostname (str): Unique name of the device.
+            ip_address (str): IPv4 address.
+            device_type (str): Category (router, switch, server).
+            status (str): Operational status.
+        """
+        self.hostname = hostname
+        self.ip_address = ip_address
+        self.device_type = device_type
+        self.status = status
 
-# Format as YYYY-MM-DD HH:MM:SS
-formattedtime = currenttime.strftime("%Y-%m-%d %H:%M:%S")
-print(f"Report generated on: {formattedtime}")
+    def __str__(self):
+        """Return a one-line summary string for this device."""
+        return f"[{self.device_type.upper()}] {self.hostname} | {self.ip_address} | Status: {self.status}"
 
-# --- Variable Declarations ---
-server_name = "Layla"
-ip_address = "10.0.0.1"
-department = "New to IT"
+    def ping(self):
+        """Simulate a ping to this device and return a result string."""
+        return f"Reply from {self.ip_address}: bytes=32 time=2ms TTL=128"
 
-total_disk_gb = 70
-used_disk_gb = 30
-usage_pct = 0.0
-report_ready = True
-disk_status = "OK - Disk usage is normal"
+    def get_info(self):
+        """Return a formatted string with this device's details."""
+        return str(self)
+
+class Router(NetworkDevice):
+    """A network router. Extends NetworkDevice with routing information."""
+    
+    def __init__(self, hostname, ip_address, routing_protocol="OSPF"):
+        """Initialize a Router — calls super().__init__."""
+        super().__init__(hostname, ip_address, device_type="router")
+        self.routing_protocol = routing_protocol
+        self.routes = ["10.0.0.0/8", "172.16.0.0/12", "192.168.1.0/24"]
+
+    def get_info(self):
+        """Override base get_info to include routing protocol and routes."""
+        base_info = super().get_info()
+        route_data = f"\n  Protocol : {self.routing_protocol}\n  Routes   : {', '.join(self.routes)}"
+        return base_info + route_data
+
+    def show_routes(self):
+        """Return the current simulated routing table."""
+        return self.routes
+
+class Switch(NetworkDevice):
+    """A network switch. Extends NetworkDevice with VLAN and port information."""
+    
+    def __init__(self, hostname, ip_address, port_count=24):
+        """Initialize a Switch — calls super().__init__."""
+        super().__init__(hostname, ip_address, device_type="switch")
+        self.port_count = port_count
+        self.vlans = ["VLAN 1 (default)", "VLAN 10 (Sales)", "VLAN 20 (HR)"]
+
+    def get_info(self):
+        """Override base get_info to include port count and VLAN list."""
+        base_info = super().get_info()
+        vlan_data = f"\n  Ports    : {self.port_count}\n  VLANs    : {', '.join(self.vlans)}"
+        return base_info + vlan_data
+
+class DeviceManager:
+    """Manages a collection of NetworkDevice objects."""
+    
+    def __init__(self):
+        """Initialize with an empty device list."""
+        self.devices = []
+
+    def add_device(self, device):
+        """Add a NetworkDevice (or subclass) to the devices list."""
+        self.devices.append(device)
+        print(f"Added: {device.hostname}")
+
+    def remove_device(self, hostname):
+        """Remove the device with the given hostname. Print error if not found."""
+        for d in self.devices:
+            if d.hostname.upper() == hostname.upper():
+                self.devices.remove(d)
+                print(f"SUCCESS: {hostname} has been decommissioned.")
+                return
+        print(f"ERROR: Device '{hostname}' not found in inventory.")
+
+    def find_device(self, hostname):
+        """Return the device object matching hostname, or None if not found."""
+        for d in self.devices:
+            if d.hostname.upper() == hostname.upper():
+                return d
+        return None
+
+    def list_all(self):
+        """Demonstrate polymorphism by calling get_info() on mixed device types."""
+        if not self.devices:
+            print("\nInventory is currently empty.")
+            return
+        print("\n" + "="*40)
+        print("       NETWORK DEVICE INVENTORY")
+        print("="*40)
+        for device in self.devices:
+            print(device.get_info())
+            print("-" * 40)
+
+# --- 3. SYSTEM FUNCTIONS (LEGACY CORE) ---
+
+def print_header():
+    """Prints the project branding and author metadata."""
+    print("--------------------------------------------------")
+    print(f"Author     : {AUTHOR}")
+    print(f"Copyright  : {COPYRIGHT}")
+    print("--------------------------------------------------")
+    print(f"Course     : {COURSE_NAME}")
+    print(f"Instructor : {INSTRUCTORS_NAME}")
+    print(f"Assignment : {ASSIGNMENT_NAME}")
+    print("--------------------------------------------------")
+    print(f"System Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("--------------------------------------------------")
 
 def run_system_checks():
-    checks = ["CPU Usage", "Memory Usage", "Disk Space", "Network Connectivity"]
-    print("\nSystem Checks:")
+    """Simulates real-time system health checks via loop iteration."""
+    checks = ["CPU Usage", "Memory Usage", "Disk Space", "Network Connectivity", "Firewall Status"]
+    print("\n[!] Running System Integrity Checks...")
     for check in checks:
-        print(f"  - {check}: PASS")
+        print(f"  - {check:<22}: [ PASS ]")
+    print("[+] All system checks completed successfully.")
 
-def print_report():
-    free_disk_gb = total_disk_gb - used_disk_gb
-    print("\n====================================")
-    print("        IT SYSTEM STATUS REPORT     ")
-    print("====================================")
-    print(f"{'Server Name':<12}: {server_name}")
-    print(f"{'IP Address':<12}: {ip_address}")
-    print(f"{'Department':<12}: {department}")
-    print("------------------------------------")
-    print(f"{'Total Disk':<12}: {total_disk_gb} GB")
-    print(f"{'Used Disk':<12}: {used_disk_gb} GB")
-    print(f"{'Free Disk':<12}: {free_disk_gb} GB")
-    print(f"{'Usage':<12}: {usage_pct:.2f}%")
-    print(f"{'Status':<12}: {disk_status}")
-    print("====================================")
+def print_report(server_name, ip, dept, total, used, usage_pct, status):
+    """
+    Displays the high-detail IT System Status Report.
+    This preserves the formatted reporting from Week 1 & 2.
+    """
+    free_disk_gb = total - used
+    print("\n" + "="*40)
+    print("        IT SYSTEM STATUS REPORT")
+    print("="*40)
+    print(f"{'Server Name':<15}: {server_name}")
+    print(f"{'IP Address':<15}: {ip}")
+    print(f"{'Department':<15}: {dept}")
+    print("-" * 40)
+    print(f"{'Total Disk':<15}: {total} GB")
+    print(f"{'Used Disk':<15}: {used} GB")
+    print(f"{'Free Disk':<15}: {free_disk_gb} GB")
+    print(f"{'Usage':<15}: {usage_pct:.2f}%")
+    print(f"{'Status':<15}: {status}")
+    print("="*40)
 
 def analyzeserverlogs():
-    """Parses server.log and generates logssummary.txt"""
-    print("\n--- Running Log Analysis ---")
+    """
+    Parses 'server.log' and generates 'logssummary.txt'.
+    Preserves log parsing, severity counting, and notepad integration.
+    """
+    print("\n--- Initializing Log Analysis Engine ---")
     
     severitycounts = {"INFO": 0, "WARNING": 0, "ERROR": 0, "CRITICAL": 0}
     uniqueerrors = set()
     criticalevents = set()
-    logentries = []
     linesread = 0
 
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    DEFAULT_LOGPATH = os.path.join(SCRIPT_DIR, "server.log")
-    LOGPATH = os.environ.get("LOGFILE", DEFAULT_LOGPATH)
+    LOGPATH = os.path.join(SCRIPT_DIR, "server.log")
+
+    if not os.path.exists(LOGPATH):
+        print(f"Error: server.log not found. Place it at: {LOGPATH}")
+        return
 
     try:
         with open(LOGPATH, "r") as f:
             for line in f:
                 linesread += 1
-                raw = line.rstrip("\n")
                 parts = line.strip().split(maxsplit=3)
-                
-                if 'debug' in globals() and debug:
-                    print(f"DEBUGLINE raw={raw!r} | parts={parts!r} | len(parts)={len(parts)}")
                 
                 if len(parts) < 3:
                     continue
 
-                datefield = f"{parts[0]} {parts[1]}"
+                # Severity extraction logic
                 severity = None
                 message = None
 
-                if len(parts) >= 3 and parts[2].startswith("[") and "]" in parts[2]:
+                if parts[2].startswith("[") and "]" in parts[2]:
                     end = parts[2].find("]")
                     severity = parts[2][1:end].upper()
-                    message = parts[3] if len(parts) > 3 else ""
-                elif len(parts) >= 4 and parts[3].startswith("[") and "]" in parts[3]:
-                    end = parts[3].find("]")
-                    severity = parts[3][1:end].upper()
-                    message = parts[3][end+2:]
-                else:
-                    continue
-
-                if severity is None or message is None:
-                    continue
-
-                severitycounts[severity] = severitycounts.get(severity, 0) + 1
+                    message = parts[3] if len(parts) > 3 else "No message"
                 
-                if severity == "ERROR":
-                    uniqueerrors.add(message)
-                if severity == "CRITICAL":
-                    criticalevents.add(message)
+                if severity in severitycounts:
+                    severitycounts[severity] += 1
+                    if severity == "ERROR":
+                        uniqueerrors.add(message)
+                    if severity == "CRITICAL":
+                        criticalevents.add(message)
 
-                logentries.append({ "date": datefield, "severity": severity, "message": message })
+        # Calculate metrics
+        totalseen = sum(severitycounts.values())
+        errorrate = (severitycounts["ERROR"] / totalseen * 100) if totalseen > 0 else 0.0
 
-    except FileNotFoundError:
-        print(f"Error: server.log not found. Place it here: {DEFAULT_LOGPATH}")
-        return
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return
-
-    # Calculate metrics
-    totallines = linesread
-    totalseen = sum(severitycounts.get(s, 0) for s in ["INFO", "WARNING", "ERROR", "CRITICAL"])
-    errorrate = (severitycounts.get("ERROR", 0) / totalseen * 100) if totalseen > 0 else 0.0
-
-   # Create an absolute path for the summary file, just like we did for the log file
-    SUMMARY_PATH = os.path.join(SCRIPT_DIR, "logssummary.txt")
-
-    # Write the summary report using the new absolute path
-    try:
+        SUMMARY_PATH = os.path.join(SCRIPT_DIR, "logssummary.txt")
         with open(SUMMARY_PATH, "w") as out:
             out.write("==================================\n")
-            out.write("    SERVER LOG ANALYSIS REPORT    \n")
+            out.write("      SERVER LOG ANALYSIS REPORT  \n")
             out.write("==================================\n")
-            out.write(f"Log File : {LOGPATH}\n")
-            out.write(f"Lines Read : {totallines}\n")
+            out.write(f"Timestamp    : {datetime.now()}\n")
+            out.write(f"Log Path     : {LOGPATH}\n")
+            out.write(f"Lines Processed: {linesread}\n")
             out.write("----------------------------------\n")
             out.write("Severity Counts:\n")
-            for level in ["INFO", "WARNING", "ERROR", "CRITICAL"]:
-                out.write(f"  {level:<8}: {severitycounts.get(level, 0):>2}\n")
+            for level, count in severitycounts.items():
+                out.write(f"  {level:<10}: {count}\n")
             out.write("----------------------------------\n")
-            out.write(f"Error Rate : {errorrate:.2f}%\n")
+            out.write(f"Calculated Error Rate: {errorrate:.2f}%\n")
             out.write("----------------------------------\n")
-            out.write(f"UNIQUE ERRORS ({len(uniqueerrors)} total)\n")
+            out.write(f"UNIQUE ERRORS FOUND ({len(uniqueerrors)}):\n")
             for err in sorted(uniqueerrors):
                 out.write(f"  - {err}\n")
-            out.write(f"CRITICAL EVENTS ({len(criticalevents)} total)\n")
+            out.write(f"CRITICAL EVENTS FOUND ({len(criticalevents)}):\n")
             for crit in sorted(criticalevents):
                 out.write(f"  - {crit}\n")
-            out.write("================================\n")
-        print(f"SUCCESS: Analysis complete. Results written to {SUMMARY_PATH}")
-        try:
-        #popopen opens the ffile without pausing your python script
-         subprocess.Popen(['notepad.exe', SUMMARY_PATH])
-        except Exception as e:
-         print(f"Could not automattically open notepad: {e}")
-        #------------------------------------------
+            out.write("==================================\n")
+
+        print(f"Analysis Complete! Summary saved to: {SUMMARY_PATH}")
+        
+        # Open in Notepad automatically
+        subprocess.Popen(['notepad.exe', SUMMARY_PATH])
+
     except Exception as e:
-        print(f"Failed to save summary report: {e}")
+        print(f"An unexpected error occurred during analysis: {e}")
+
+# --- 4. GRAPHICS FUNCTIONS ---
+
+def draw_topology(manager):
+    """
+    Uses Turtle Graphics to draw a topology map based on the DeviceManager list.
+    """
+    if not manager.devices:
+        print("\n[!] No devices to draw. Please add a Router or Switch first.")
+        return
+    
+    print("\n[+] Launching Turtle Graphics Topology...")
+    screen = turtle.Screen()
+    screen.title("Live Network Topology - IT Dashboard")
+    screen.bgcolor("#0a0e1a")
+    
+    t = turtle.Turtle()
+    t.speed(0)
+    t.hideturtle()
+
+    x_start = -300
+    x_gap = 150
+    
+    for i, device in enumerate(manager.devices):
+        x = x_start + (i * x_gap)
+        
+        t.penup()
+        t.goto(x, 0)
+        t.pendown()
+
+        # Polymorphic Color Selection
+        if device.device_type == "router":
+            t.fillcolor("#10b981") # Green
+        else:
+            t.fillcolor("#3b82f6") # Blue
+
+        # Draw box
+        t.begin_fill()
+        for _ in range(2):
+            t.forward(80)
+            t.left(90)
+            t.forward(50)
+            t.left(90)
+        t.end_fill()
+
+        # Label device
+        t.penup()
+        t.goto(x + 40, -25)
+        t.color("white")
+        t.write(device.hostname, align="center", font=("Arial", 10, "bold"))
+        
+        t.goto(x + 40, -40)
+        t.write(device.ip_address, align="center", font=("Arial", 8, "normal"))
+
+    print("--- Close Turtle window to return to Main Menu ---")
+    turtle.done()
+
+# --- 5. MAIN LOGIC AND MENU ---
 
 def main():
-    global server_name, ip_address, department
-    global total_disk_gb, used_disk_gb, usage_pct
-    global report_ready, disk_status
-
-    print(f"\n{APPNAME} v{VERSION}")
-    print("================================")
-    print("Careful spongebob. CAREFUL SPONGEBOB!")
+    """Entry point for the IT Dashboard application."""
+    print_header()
+    
+    # Initialize OOP Manager
+    manager = DeviceManager()
+    
+    # Initialize Legacy Variables
+    server_name = "Layla"
+    ip_address = "10.0.0.1"
+    department = "New to IT"
+    total_disk_gb = 70
+    used_disk_gb = 30
+    usage_pct = 42.86
+    disk_status = "OK - Disk usage is normal"
+    report_ready = True
 
     while True:
-        print("\n================================")
-        print("--- IT Report Generator ---")
-        print("1) Set Server Info")
-        print("2) View Report")
-        print("3) Run System Checks")
-        print("4) Analyze Server Logs")
-        print("5) Exit")
-        print("================================")
+        print("\n" + "*"*32)
+        print(f"   {APPNAME} v{VERSION} MAIN MENU")
+        print("*"*32)
+        print("1) Manage Network Devices (Add Router/Switch)")
+        print("2) List Device Inventory (Polymorphism)")
+        print("3) Remove Device by Hostname")
+        print("4) View Legacy System Status Report")
+        print("5) Configure System Report Settings")
+        print("6) Run Live System Health Checks")
+        print("7) Analyze Server Logs & Metrics")
+        print("8) Draw Network Topology (Turtle)")
+        print("9) Ping a Device")
+        print("0) Exit Dashboard")
+        print("*"*32)
 
-        choice = input("Select an option: ").strip()
+        choice = input("Enter selection: ").strip()
 
         if choice == "1":
-            server_name = input(f"Server Name [{server_name}]: ").strip() or server_name
-            ip_address = input(f"IP Address [{ip_address}]: ").strip() or ip_address
-            department = input(f"Department [{department}]: ").strip() or department
-
-            try:
-                total_disk_gb = int(input(f"Total Disk (GB) [{total_disk_gb}]: ").strip() or str(total_disk_gb))
-                used_disk_gb  = int(input(f"Used Disk (GB) [{used_disk_gb}]: ").strip() or str(used_disk_gb))
-            except ValueError:
-                print("Invalid input for disk space. Please enter numeric values.")
-                continue
-
-            if total_disk_gb < 0 or used_disk_gb < 0 or used_disk_gb > total_disk_gb:
-                print("Invalid disk values. Ensure non-negative and used <= total.")
-                continue
-
-            if total_disk_gb > 0:
-                usage_pct = (used_disk_gb / total_disk_gb) * 100
+            dtype = input("Add (R)outer or (S)witch? ").strip().upper()
+            hname = input("Enter Hostname: ").strip()
+            ipaddr = input("Enter IP Address: ").strip()
+            
+            if dtype == 'R':
+                proto = input("Enter Routing Protocol [OSPF]: ") or "OSPF"
+                manager.add_device(Router(hname, ipaddr, proto))
+            elif dtype == 'S':
+                ports = input("Enter Port Count [24]: ") or "24"
+                manager.add_device(Switch(hname, ipaddr, int(ports)))
             else:
-                usage_pct = 0.0
-
-            if usage_pct > 90:
-                disk_status = "CRITICAL - Immediate action required"
-            elif usage_pct > 75:
-                disk_status = "WARNING - Disk usage is elevated"
-            else:
-                disk_status = "OK - Disk usage is normal"
-
-            report_ready = True
-            print("\nData entered successfully!")
+                print("Invalid device type selection.")
 
         elif choice == "2":
-            if not report_ready:
-                print("No data entered yet. Choose option 1 first.")
-            else:
-                print_report()
+            manager.list_all()
 
         elif choice == "3":
-            run_system_checks()
+            hname = input("Enter Hostname to remove: ")
+            manager.remove_device(hname)
 
         elif choice == "4":
-            analyzeserverlogs()
+            if report_ready:
+                print_report(server_name, ip_address, department, 
+                             total_disk_gb, used_disk_gb, usage_pct, disk_status)
+            else:
+                print("Report not configured. Use Option 5 first.")
 
         elif choice == "5":
+            server_name = input(f"Server Name [{server_name}]: ") or server_name
+            ip_address = input(f"IP Address [{ip_address}]: ") or ip_address
+            department = input(f"Department [{department}]: ") or department
+            try:
+                total_disk_gb = int(input(f"Total Disk [{total_disk_gb}]: ") or total_disk_gb)
+                used_disk_gb = int(input(f"Used Disk [{used_disk_gb}]: ") or used_disk_gb)
+                
+                # Re-calculate usage
+                usage_pct = (used_disk_gb / total_disk_gb) * 100
+                if usage_pct > 90: disk_status = "CRITICAL"
+                elif usage_pct > 75: disk_status = "WARNING"
+                else: disk_status = "OK"
+                report_ready = True
+                print("[+] Report settings updated.")
+            except ValueError:
+                print("Invalid numeric entry for disk space.")
+
+        elif choice == "6":
+            run_system_checks()
+
+        elif choice == "7":
+            analyzeserverlogs()
+
+        elif choice == "8":
+            draw_topology(manager)
+
+        elif choice == "9":
+            hname = input("Hostname to ping: ")
+            dev = manager.find_device(hname)
+            if dev:
+                print(dev.ping())
+            else:
+                print("Device not found in inventory.")
+
+        elif choice == "0":
+            print("\nShutting down Dashboard...")
             print("Smell ya later stinky.")
             break
-
+        
         else:
-            print("Invalid choice. Enter 1, 2, 3, 4, or 5.")
+            print("Selection invalid. Please try again.")
 
 if __name__ == "__main__":
     main()

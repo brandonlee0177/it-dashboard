@@ -1,20 +1,21 @@
 ==================================
-    SERVER LOG ANALYSIS REPORT    
+      SERVER LOG ANALYSIS REPORT  
 ==================================
-Log File : C:\Users\jupit\Desktop\it-dashboard\server.log
-Lines Read : 11
+Timestamp    : 2026-04-23 09:46:52.535400
+Log Path     : c:\Users\jupit\Desktop\it-dashboard\server.log
+Lines Processed: 11
 ----------------------------------
 Severity Counts:
-  INFO    :  4
-  WARNING :  3
-  ERROR   :  3
-  CRITICAL:  1
+  INFO      : 4
+  WARNING   : 3
+  ERROR     : 3
+  CRITICAL  : 1
 ----------------------------------
-Error Rate : 27.27%
+Calculated Error Rate: 27.27%
 ----------------------------------
-UNIQUE ERRORS (2 total)
+UNIQUE ERRORS FOUND (2):
   - Connection refused to database
   - NIC timeout on eth0
-CRITICAL EVENTS (1 total)
+CRITICAL EVENTS FOUND (1):
   - Primary database unreachable
-================================
+==================================
