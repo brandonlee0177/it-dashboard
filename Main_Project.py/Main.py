@@ -4,7 +4,7 @@ import sys
 from datetime import datetime
 
 # Import your existing custom modules
-from config import APPNAME, VERSION, AUTHOR
+from config import APPNAME, VERSION, AUTHOR, INSTRUCTORS_NAME, ASSIGNMENT_NAME, COPYRIGHT
 from network_devices import DeviceManager, Router, Switch
 from system_utils import run_system_checks, print_report, analyzeserverlogs
 from graphics import draw_topology
@@ -39,6 +39,9 @@ class DashboardGUI:
         # Dashboard State Variables
         self.manager = DeviceManager()
         self.author = AUTHOR
+        self.instructors_name = INSTRUCTORS_NAME
+        self.assignment_name = ASSIGNMENT_NAME
+        self.copy_right = COPYRIGHT
         self.server_name = "Layla"
         self.ip_address = "10.0.0.1"
         self.department = "New to IT"
@@ -54,6 +57,10 @@ class DashboardGUI:
         sys.stdout = PrintRedirector(self.console_output)
         
         print(f"--- Welcome to {APPNAME} v{VERSION} ---")
+        print(f"Author: {self.author}")
+        print(f"Instructor: {self.instructors_name}")
+        print(f"Assignment: {self.assignment_name}")
+        print(f"Copyright: {self.copy_right}")
         print(f"System Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("Ready for input...\n")
 
