@@ -1,8 +1,8 @@
 ==================================
       SERVER LOG ANALYSIS REPORT  
 ==================================
-Timestamp    : 2026-04-28 14:00:17.259899
-Log Path     : c:\Users\jupit\Desktop\it-dashboard\server.log
+Timestamp    : 2026-04-28 14:44:13.406342
+Log Path     : c:\Users\jupit\Desktop\it-dashboard\Main_Project.py\server.log
 Lines Processed: 11
 ----------------------------------
 Severity Counts:

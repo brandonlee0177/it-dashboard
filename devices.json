@@ -1,0 +1,50 @@
+[
+    {
+        "hostname": "Router1",
+        "ip_address": "192.168.1.1",
+        "device_type": "router",
+        "status": "online",
+        "routing_protocol": "OSPF",
+        "routes": [
+            "10.0.0.0/8",
+            "172.16.0.0/12",
+            "192.168.1.0/24"
+        ]
+    },
+    {
+        "hostname": "Switch1",
+        "ip_address": "192.168.1.2",
+        "device_type": "switch",
+        "status": "online",
+        "port_count": 24,
+        "vlans": [
+            "VLAN 1 (default)",
+            "VLAN 10 (Sales)",
+            "VLAN 20 (HR)"
+        ]
+    },
+    {
+        "hostname": "Switch2",
+        "ip_address": "192.168.1.3",
+        "device_type": "switch",
+        "status": "online",
+        "port_count": 24,
+        "vlans": [
+            "VLAN 1 (default)",
+            "VLAN 10 (Sales)",
+            "VLAN 20 (HR)"
+        ]
+    },
+    {
+        "hostname": "Router2",
+        "ip_address": "192.168.1.4",
+        "device_type": "router",
+        "status": "online",
+        "routing_protocol": "OSPF",
+        "routes": [
+            "10.0.0.0/8",
+            "172.16.0.0/12",
+            "192.168.1.0/24"
+        ]
+    }
+]

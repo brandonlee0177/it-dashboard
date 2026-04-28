@@ -10,13 +10,14 @@ import os
 import subprocess
 import turtle
 import random
+import socket  # Added for Network Scanner utility
 
 # --- 1. BOILERPLATE & CONSTANTS ---
 debug = False
 logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
 
 APPNAME = "IT Dashboard"
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 AUTHOR = "Brandon Lee"
 COPYRIGHT = "Copyright (c) 2026 Brandon Lee. All rights reserved."
 COURSE_NAME = "Programming for Technology Professionals - KU_JAX_COP1034CD4-104062026"
@@ -307,7 +308,83 @@ def draw_topology(manager):
     print("--- Close Turtle window to return to Main Menu ---")
     turtle.done()
 
-# --- 5. MAIN LOGIC AND MENU ---
+# --- 5. NETWORK SCANNER UTILITY (NEW ADDITION) ---
+
+def validate_port(port_str):
+    """
+    Validates that the given port is an integer between 1 and 65535.
+    Returns the port as an int if valid, otherwise returns None.
+    """
+    try:
+        port = int(port_str)
+        if 1 <= port <= 65535:
+            return port
+        return None
+    except ValueError:
+        return None
+
+def scan_target(ip_address, start_port, end_port):
+    """
+    Scans a range of ports on a target IP address using the socket library.
+    Catches realistic connection errors and returns a list of open ports.
+    """
+    open_ports = []
+    print(f"\n[!] Starting scan on {ip_address} from port {start_port} to {end_port}...")
+    
+    for port in range(start_port, end_port + 1):
+        # Create a socket object for each port check
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket.setdefaulttimeout(0.5) 
+        
+        try:
+            # connect_ex returns 0 if the connection succeeds (port is open)
+            result = s.connect_ex((ip_address, port))
+            if result == 0:
+                open_ports.append(port)
+        except socket.error as e:
+            # Inline comment: catch specific networking errors without crashing
+            print(f"Socket error attempting to connect to port {port}: {e}")
+        finally:
+            s.close()
+            
+    return open_ports
+
+def run_port_scanner_utility():
+    """Main interface function for the Network Scanner utility."""
+    print("\n" + "="*40)
+    print("       NETWORK PORT SCANNER")
+    print("="*40)
+    
+    # Input validation on user-supplied data
+    target_ip = input("Enter target IP to scan (e.g., 127.0.0.1): ").strip()
+    if not target_ip:
+        print("[-] Invalid IP address. Returning to menu.")
+        return
+
+    start_port_input = input("Enter start port [1]: ").strip() or "1"
+    end_port_input = input("Enter end port [1024]: ").strip() or "1024"
+
+    start_port = validate_port(start_port_input)
+    end_port = validate_port(end_port_input)
+
+    # Conditionals making a real decision based on boundary constraints
+    if start_port is None or end_port is None or start_port > end_port:
+        print("[-] Error: Ports must be numbers between 1 and 65535, and start must be less than or equal to end.")
+        return
+
+    try:
+        open_ports = scan_target(target_ip, start_port, end_port)
+        print("\n[+] Scan Complete.")
+        if open_ports:
+            print(f"Open ports found on {target_ip}:")
+            for p in open_ports:
+                print(f"  - Port {p} is OPEN")
+        else:
+            print(f"No open ports found on {target_ip} in range {start_port}-{end_port}.")
+    except Exception as e:
+        print(f"[-] An unexpected error occurred during the scan: {e}")
+
+# --- 6. MAIN LOGIC AND MENU ---
 
 def main():
     """Entry point for the IT Dashboard application."""
@@ -339,6 +416,7 @@ def main():
         print("7) Analyze Server Logs & Metrics")
         print("8) Draw Network Topology (Turtle)")
         print("9) Ping a Device")
+        print("10) Run Network Port Scanner Utility")  # Added Scanner Option
         print("0) Exit Dashboard")
         print("*"*32)
 
@@ -406,6 +484,9 @@ def main():
                 print(dev.ping())
             else:
                 print("Device not found in inventory.")
+
+        elif choice == "10":
+            run_port_scanner_utility()
 
         elif choice == "0":
             print("\nShutting down Dashboard...")
